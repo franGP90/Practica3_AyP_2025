@@ -20,7 +20,7 @@ type User = {
 }
 
 type Product = {
-_id: ObjectId
+_id?: ObjectId
 name: String,// requerido
 description: String,// opcional
 price: Number,// requerido, >0
@@ -29,26 +29,27 @@ createdAt: Date// (default)
 }
 
 type Carts = {
-    _id: ObjectId
+    _id?: ObjectId
     userId: ObjectId //(referencia a users), único por usuario
     items: Product[] //{ productId, quantity }
 }
-const coleccion = () => getDb().collection<User>("User");
+const UserColection = () => getDb().collection<User>("Users");
+const ProductColection = () => getDb().collection<Product>("Products");
 
 router.get("/", async (req, res)=>{
   res.send("Se ha conectado a la ruta de auth correctamente");
 });
 
 
-router.post("/register", async (req, res) => {
+router.post("api/auth/register", async (req, res) => {
     try{
         const {username, email, password} = req.body as {username:string, email:string, password:string};
         const createdAt = new Date();
-        const users = coleccion();
+        const users = UserColection();
 
         const exists = await users.findOne({email});
         if(exists){
-            return res.status(400).json({message: "Email ya existente"})
+            return res.status(409).json({message: "Email ya existente"})
         };
 
         const passEncripta = await bcrypt.hash(password,10);
@@ -61,11 +62,32 @@ router.post("/register", async (req, res) => {
     }
 });
 
-router.post("/login", async (req, res)=>{
+router.post("api/products", async (req, res) => {
+    try{
+        const {name, description, price, stock} = req.body as {name: String, description: String, price: Number, stock: Number, }
+        const createdAt = new Date();
+        const products = ProductColection();
+
+        const exists = await products.findOne({name});
+        if(exists){
+            return res.status(409).json({message: "El producto ya existe ya existente"})
+        };
+
+
+        await products.insertOne({name, description, price, stock, createdAt,});
+
+        res.status(201).json({message: "Producto creado correctamente!"})
+
+    }catch(err){
+        res.status(500).json({message: err});
+    }
+});
+
+router.post("api/auth/login", async (req, res)=>{
     try{
         const {email, password} = req.body as {email:string, password:string};
 
-        const users = coleccion();
+        const users = UserColection();
 
         const user = await users.findOne({email});
         if(!user) return res.status(404).json({message: "email incorrecto"});

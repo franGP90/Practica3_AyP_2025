@@ -10,7 +10,9 @@ connectMongoDB();
 
 const app = express();
 app.use(express.json());
-app.use("/auth", rutasAuth);
+app.use("api/auth/register", rutasAuth);
+app.use("api/auth/login", rutasAuth);
+app.use("api/products", rutasAuth);
 app.use("/user", router);
 
 app.listen(3000, () => console.log("El API se ha inicidado"));
