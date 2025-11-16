@@ -12,26 +12,26 @@ dotenv.config();
 const SECRET = process.env.SECRET;
 
 type User = {
-    _id?: ObjectId; //(auto‑generado)
-    username: String, //único, requerido
-    email: String,// único, requerido, formato email válido
-    passwordHash: String,// (hash bcrypt)
-    createdAt: Date //(default)
+    _id?: ObjectId; 
+    username: String, 
+    email: String,
+    passwordHash: String,
+    createdAt: Date
 }
 
 type Product = {
-_id?: ObjectId
-name: String,// requerido
-description: String,// opcional
-price: Number,// requerido, >0
-stock: Number, //requerido, >=0
-createdAt: Date// (default)
+_id?: ObjectId,
+name: String,
+description: String,
+price: Number,
+stock: Number, 
+createdAt: Date
 }
 
 type Carts = {
-    _id?: ObjectId
-    userId: ObjectId //(referencia a users), único por usuario
-    items: Product[] //{ productId, quantity }
+    _id?: ObjectId,
+    userId: ObjectId,
+    items: Product[] 
 }
 const UserColection = () => getDb().collection<User>("Users");
 const ProductColection = () => getDb().collection<Product>("Products");
