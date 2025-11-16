@@ -6,7 +6,7 @@ const router = Router();
 
 router.get("/user", verifyToken, (req: AuthRequest, res) => {
     res.json({
-        message: "Acceso okey makei",
+        message: "Acceso permitido",
         user: req.user
     })
 });
